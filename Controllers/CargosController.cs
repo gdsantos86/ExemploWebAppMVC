@@ -10,23 +10,22 @@ using ExemploWebAppMVC.Models;
 
 namespace ExemploWebAppMVC.Controllers
 {
-    public class FuncionariosController : Controller
+    public class CargosController : Controller
     {
         private readonly AppDbContext _context;
 
-        public FuncionariosController(AppDbContext context)
+        public CargosController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Funcionarios
+        // GET: Cargos
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Funcionarios.Include(f => f.Empresa);
-            return View(await appDbContext.ToListAsync());
+            return View(await _context.Cargos.ToListAsync());
         }
 
-        // GET: Funcionarios/Details/5
+        // GET: Cargos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,44 +33,39 @@ namespace ExemploWebAppMVC.Controllers
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios
-                .Include(f => f.Empresa)
+            var cargo = await _context.Cargos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (funcionario == null)
+            if (cargo == null)
             {
                 return NotFound();
             }
 
-            return View(funcionario);
+            return View(cargo);
         }
 
-        // GET: Funcionarios/Create
+        // GET: Cargos/Create
         public IActionResult Create()
         {
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Nome");
-            ViewData["CargoId"] = new SelectList(_context.Cargos, "Id", "Nome");
             return View();
         }
 
-        // POST: Funcionarios/Create
+        // POST: Cargos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Idade,Cargo,EmpresaId")] Funcionario funcionario)
+        public async Task<IActionResult> Create([Bind("Id,Nome")] Cargo cargo)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(funcionario);
+                _context.Add(cargo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Nome", funcionario.EmpresaId);
-            ViewData["CargoId"] = new SelectList(_context.Cargos, "Id", "Nome", funcionario.CargoId);
-            return View(funcionario);
+            return View(cargo);
         }
 
-        // GET: Funcionarios/Edit/5
+        // GET: Cargos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -79,24 +73,22 @@ namespace ExemploWebAppMVC.Controllers
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios.FindAsync(id);
-            if (funcionario == null)
+            var cargo = await _context.Cargos.FindAsync(id);
+            if (cargo == null)
             {
                 return NotFound();
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Nome", funcionario.EmpresaId);
-            ViewData["CargoId"] = new SelectList(_context.Cargos, "Id", "Nome", funcionario.CargoId);
-            return View(funcionario);
+            return View(cargo);
         }
 
-        // POST: Funcionarios/Edit/5
+        // POST: Cargos/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Idade,Cargo,EmpresaId")] Funcionario funcionario)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Cargo cargo)
         {
-            if (id != funcionario.Id)
+            if (id != cargo.Id)
             {
                 return NotFound();
             }
@@ -105,12 +97,12 @@ namespace ExemploWebAppMVC.Controllers
             {
                 try
                 {
-                    _context.Update(funcionario);
+                    _context.Update(cargo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FuncionarioExists(funcionario.Id))
+                    if (!CargoExists(cargo.Id))
                     {
                         return NotFound();
                     }
@@ -121,12 +113,10 @@ namespace ExemploWebAppMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Nome", funcionario.EmpresaId);
-            ViewData["CargoId"] = new SelectList(_context.Cargos, "Id", "Nome", funcionario.CargoId);
-            return View(funcionario);
+            return View(cargo);
         }
 
-        // GET: Funcionarios/Delete/5
+        // GET: Cargos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,35 +124,34 @@ namespace ExemploWebAppMVC.Controllers
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios
-                .Include(f => f.Empresa)
+            var cargo = await _context.Cargos
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (funcionario == null)
+            if (cargo == null)
             {
                 return NotFound();
             }
 
-            return View(funcionario);
+            return View(cargo);
         }
 
-        // POST: Funcionarios/Delete/5
+        // POST: Cargos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var funcionario = await _context.Funcionarios.FindAsync(id);
-            if (funcionario != null)
+            var cargo = await _context.Cargos.FindAsync(id);
+            if (cargo != null)
             {
-                _context.Funcionarios.Remove(funcionario);
+                _context.Cargos.Remove(cargo);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FuncionarioExists(int id)
+        private bool CargoExists(int id)
         {
-            return _context.Funcionarios.Any(e => e.Id == id);
+            return _context.Cargos.Any(e => e.Id == id);
         }
     }
 }
