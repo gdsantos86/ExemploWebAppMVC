@@ -65,7 +65,7 @@ namespace ExemploWebAppMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", funcionario.EmpresaId);
+            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Nome", funcionario.EmpresaId);
             return View(funcionario);
         }
 
@@ -82,7 +82,7 @@ namespace ExemploWebAppMVC.Controllers
             {
                 return NotFound();
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", funcionario.EmpresaId);
+            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Nome", funcionario.EmpresaId);
             return View(funcionario);
         }
 
@@ -118,7 +118,7 @@ namespace ExemploWebAppMVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Id", funcionario.EmpresaId);
+            ViewData["EmpresaId"] = new SelectList(_context.Empresas, "Id", "Nome", funcionario.EmpresaId);
             return View(funcionario);
         }
 
