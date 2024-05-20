@@ -20,10 +20,16 @@ namespace ExemploWebAppMVC.Controllers
         }
 
         // GET: Funcionarios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string ordemDeClassificacao)
         {
-            var appDbContext = _context.Funcionarios.Include(f => f.Empresa);
-            return View(await appDbContext.ToListAsync());
+            var funcionarios = _context.Funcionarios
+                .Include(f => f.Cargo)
+                .Include(f => f.Empresa)
+                .AsQueryable();
+
+            var funcionariosClassificados = Classificar(funcionarios, ordemDeClassificacao);
+
+            return View(await funcionariosClassificados.AsNoTracking().ToListAsync());
         }
 
         // GET: Funcionarios/Details/5
@@ -58,7 +64,7 @@ namespace ExemploWebAppMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Idade,Cargo,EmpresaId")] Funcionario funcionario)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Idade,CargoId,EmpresaId")] Funcionario funcionario)
         {
             if (ModelState.IsValid)
             {
@@ -164,5 +170,23 @@ namespace ExemploWebAppMVC.Controllers
         {
             return _context.Funcionarios.Any(e => e.Id == id);
         }
+
+
+        private IQueryable<Funcionario> Classificar(IQueryable<Funcionario> funcionarios, string ordemDeClassificacao)
+        {
+            ViewBag.NomeClassifParam = ordemDeClassificacao == "Nome" ? "nome_dec" : "Nome";
+            ViewBag.IdadeClassifParam = ordemDeClassificacao == "Idade" ? "idade_dec" : "Idade";
+
+            funcionarios = ordemDeClassificacao switch
+            {
+                "Nome" => funcionarios.OrderBy(f => f.Nome),
+                "nome_dec" => funcionarios.OrderByDescending(f => f.Nome),
+                "Idade" => funcionarios.OrderBy(s => s.Idade),
+                "idade_dec" => funcionarios.OrderByDescending(s => s.Idade),
+                _ => funcionarios.OrderBy(s => s.Id),
+            };
+            return funcionarios;
+        }
+
     }
 }
