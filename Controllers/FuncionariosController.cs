@@ -20,14 +20,20 @@ namespace ExemploWebAppMVC.Controllers
         }
 
         // GET: Funcionarios
-        public async Task<IActionResult> Index(string ordemDeClassificacao)
+        public async Task<IActionResult> Index(string ordemDeClassificacao, string cargoIdPesq, string empresaIdPesq)
         {
             var funcionarios = _context.Funcionarios
                 .Include(f => f.Cargo)
                 .Include(f => f.Empresa)
                 .AsQueryable();
 
-            var funcionariosClassificados = Classificar(funcionarios, ordemDeClassificacao);
+            ViewBag.CargoId = new SelectList(await _context.Cargos.ToListAsync(), "Id", "Nome");
+            ViewBag.EmpresaId = new SelectList(await _context.Empresas.ToListAsync(), "Id", "Nome");
+
+
+            var funcionariosFiltrados = Filtrar(funcionarios, cargoIdPesq, empresaIdPesq);
+
+            var funcionariosClassificados = Classificar(funcionariosFiltrados, ordemDeClassificacao);
 
             return View(await funcionariosClassificados.AsNoTracking().ToListAsync());
         }
@@ -169,6 +175,27 @@ namespace ExemploWebAppMVC.Controllers
         private bool FuncionarioExists(int id)
         {
             return _context.Funcionarios.Any(e => e.Id == id);
+        }
+
+
+        private IQueryable<Funcionario>Filtrar(IQueryable<Funcionario> funcionarios, string cargoIdPesq, string empresaIdPesq)
+        {
+            ViewBag.CargoIdCorrente = cargoIdPesq;
+            ViewBag.EmpresaIdCorrente = empresaIdPesq;
+
+
+            if (!String.IsNullOrEmpty(cargoIdPesq))
+            {
+                funcionarios = funcionarios.Where(f => f.CargoId == Convert.ToInt32(cargoIdPesq));
+            }
+
+            if (!String.IsNullOrEmpty(empresaIdPesq))
+            {
+                funcionarios = funcionarios.Where(f => f.CargoId == Convert.ToInt32(empresaIdPesq));
+            }
+
+
+            return funcionarios;
         }
 
 

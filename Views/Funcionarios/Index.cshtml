@@ -5,21 +5,43 @@
 }
 
 <h1>Funcionário</h1>
-
+<br/>
 <p>
     <a asp-action="Create" class="btn btn-success">Inserir</a>
 </p>
-<table class="table">
+
+<p>
+    <form asp-action="Index" method="get" class="row form-group border p-3">
+        <div class="col-md-5">
+            <select asp-for="@Model.GetEnumerator().Current.EmpresaId" class="form-select" name="empresaIdPesq" value="ViewBag.EmpresaIdCorrente" asp-items="ViewBag.EmpresaId">
+                <option value="">Selecione uma empresa...</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select asp-for="@Model.GetEnumerator().Current.CargoId" class="form-select" name="cargoIdPesq" value="ViewBag.CargoIdCorrente" asp-items="ViewBag.CargoId">
+                <option value="">Selecione um cargo...</option>
+            </select>
+        </div>
+        <div class="col-1">
+            <input type="submit" value="Pesquisa" class="btn btn-secondary" />
+        </div>
+        <div class="col-2">
+            <a asp-action="Index" class="btn btn-secondary">Listar todos</a>
+        </div>
+    </form>
+</p>
+
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                Cód.
             </th>
             <th>
-                @Html.ActionLink("Nome", "Index", new { ordemDeClassificacao = ViewBag.NomeClassifParam })
+                @Html.ActionLink("Nome", "Index", new { ordemDeClassificacao = ViewBag.NomeClassifParam }, new { style = "text-decoration:none; color:black;" })
             </th>
             <th>
-                @Html.ActionLink("Idade", "Index", new { ordemDeClassificacao = ViewBag.IdadeClassifParam })
+                @Html.ActionLink("Idade", "Index", new { ordemDeClassificacao = ViewBag.IdadeClassifParam }, new { style = "text-decoration:none; color:black;" })
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Cargo)
