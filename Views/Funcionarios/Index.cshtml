@@ -11,14 +11,14 @@
 </p>
 
 <p>
-    <form asp-action="Index" method="get" class="row form-group border p-3">
+    <form asp-action="Index" method="get" class="row border p-3">
         <div class="col-md-5">
-            <select asp-for="@Model.GetEnumerator().Current.EmpresaId" class="form-select" name="empresaIdPesq" value="ViewBag.EmpresaIdCorrente" asp-items="ViewBag.EmpresaId">
+            <select class="form-select" name="empresaIdPesq" value="ViewBag.EmpresaIdCorrente" asp-items="ViewBag.Empresas">
                 <option value="">Selecione uma empresa...</option>
             </select>
         </div>
         <div class="col-md-4">
-            <select asp-for="@Model.GetEnumerator().Current.CargoId" class="form-select" name="cargoIdPesq" value="ViewBag.CargoIdCorrente" asp-items="ViewBag.CargoId">
+            <select class="form-select" name="cargoIdPesq" value="ViewBag.CargoIdCorrente" asp-items="ViewBag.Cargos">
                 <option value="">Selecione um cargo...</option>
             </select>
         </div>
@@ -31,9 +31,9 @@
     </form>
 </p>
 
-<table class="table table-bordered">
+<table class="table table-bordered table-hover">
     <thead>
-        <tr>
+        <tr style="text-align:center">
             <th>
                 Cód.
             </th>
@@ -49,13 +49,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.Empresa)
             </th>
-            <th></th>
+            <th>
+                Ações
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr style ="text-align:center">
                 <td>
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>

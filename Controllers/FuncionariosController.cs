@@ -22,20 +22,20 @@ namespace ExemploWebAppMVC.Controllers
         // GET: Funcionarios
         public async Task<IActionResult> Index(string ordemDeClassificacao, string cargoIdPesq, string empresaIdPesq)
         {
+            // Preenche os selects na view
+            ViewBag.Cargos = new SelectList(await _context.Cargos.ToListAsync(), "Id", "Nome", Convert.ToInt32(cargoIdPesq));
+            ViewBag.Empresas = new SelectList(await _context.Empresas.ToListAsync(), "Id", "Nome", Convert.ToInt32(empresaIdPesq));
+
             var funcionarios = _context.Funcionarios
                 .Include(f => f.Cargo)
                 .Include(f => f.Empresa)
                 .AsQueryable();
 
-            ViewBag.CargoId = new SelectList(await _context.Cargos.ToListAsync(), "Id", "Nome");
-            ViewBag.EmpresaId = new SelectList(await _context.Empresas.ToListAsync(), "Id", "Nome");
+            funcionarios = Filtrar(funcionarios, cargoIdPesq, empresaIdPesq);
 
+            funcionarios = Classificar(funcionarios, ordemDeClassificacao);
 
-            var funcionariosFiltrados = Filtrar(funcionarios, cargoIdPesq, empresaIdPesq);
-
-            var funcionariosClassificados = Classificar(funcionariosFiltrados, ordemDeClassificacao);
-
-            return View(await funcionariosClassificados.AsNoTracking().ToListAsync());
+            return View(await funcionarios.AsNoTracking().ToListAsync());
         }
 
         // GET: Funcionarios/Details/5
@@ -178,7 +178,7 @@ namespace ExemploWebAppMVC.Controllers
         }
 
 
-        private IQueryable<Funcionario>Filtrar(IQueryable<Funcionario> funcionarios, string cargoIdPesq, string empresaIdPesq)
+        private IQueryable<Funcionario> Filtrar(IQueryable<Funcionario> funcionarios, string cargoIdPesq, string empresaIdPesq)
         {
             ViewBag.CargoIdCorrente = cargoIdPesq;
             ViewBag.EmpresaIdCorrente = empresaIdPesq;
@@ -191,7 +191,7 @@ namespace ExemploWebAppMVC.Controllers
 
             if (!String.IsNullOrEmpty(empresaIdPesq))
             {
-                funcionarios = funcionarios.Where(f => f.CargoId == Convert.ToInt32(empresaIdPesq));
+                funcionarios = funcionarios.Where(f => f.EmpresaId == Convert.ToInt32(empresaIdPesq));
             }
 
 
